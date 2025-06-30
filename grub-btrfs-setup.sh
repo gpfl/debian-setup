@@ -1,4 +1,5 @@
 #! /bin/sh
+
 sudo apt install -y curl git build-essential inotify-tools
 
 if [ ! -d "grub-btrfs" ]; then

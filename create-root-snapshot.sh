@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 SNAP_NAME="root-snapshot-$(date +%Y-%m-%d)"
 sudo mkdir -p /mnt/btrfs-root
