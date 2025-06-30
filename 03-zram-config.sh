@@ -1,13 +1,25 @@
 #!/bin/sh
 
-# Install systemd-zram-generator
-sudo apt update
-sudo apt install -y systemd-zram-generator
+# Ensure the script is run as root
+if [ "$(id -u)" -ne 0 ]; then
+    echo "This script must be run as root" >&2
+    exit 1
+fi
 
-# if there's no config file, create the zram config
-if [ ! -f /etc/systemd/zram-generator.conf ]; then
-    echo "Creating zram-generator configuration..."
-    sudo tee /etc/systemd/zram-generator.conf > /dev/null <<EOF
+set -euo pipefail
+
+# Define paths and configurations
+ZRAM_CONFIG_PATH="/etc/systemd/zram-generator.conf"
+
+# Install systemd-zram-generator
+echo "Installing systemd-zram-generator."
+apt update && apt install -y systemd-zram-generator
+
+# Check if the zram config file already exists
+if [ ! -f "$ZRAM_CONFIG_PATH" ]; then
+    echo "Creating zram-generator configuration."
+    # Create the zram config file
+    tee "$ZRAM_CONFIG_PATH" > /dev/null <<EOF
 [zram0]
 zram-size = ram * 0.5
 compression-algorithm = zstd
@@ -17,5 +29,8 @@ else
 fi
 
 # Reload systemd and start the zram swap device
-sudo systemctl daemon-reload
-sudo systemctl start dev-zram0.swap
+echo "Reloading systemd and starting zram swap device."
+systemctl daemon-reload
+systemctl start dev-zram0.swap
+
+echo "03 - ZRAM configured successfully."
