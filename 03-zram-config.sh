@@ -32,5 +32,7 @@ fi
 echo "Reloading systemd and starting zram swap device."
 systemctl daemon-reload
 systemctl start dev-zram0.swap
+sleep 5
+swapon
 
 echo "03 - ZRAM configured successfully."
