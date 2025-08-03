@@ -9,9 +9,9 @@ fi
 set -euo pipefail
 
 # Define paths and variables
-BTRFS_VOLUME="/dev/sda3"  # Default volume, can be overridden by passing an argument
+BTRFS_VOLUME="/dev/sda2"  # Default volume, can be overridden by passing an argument
 BTRFS_ROOT="/mnt/btrfs-root"
-SNAPSHOTS_DIR="$BTRFS_ROOT/snapshots/root"
+SNAPSHOTS_DIR="$BTRFS_ROOT/@snapshots/root"
 SNAP_NAME="root-snapshot-$(date +%Y-%m-%d)"
 
 # Use the first argument as the volume if provided
