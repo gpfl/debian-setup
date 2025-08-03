@@ -3,11 +3,18 @@
 set -euo pipefail
 
 # Define paths and configurations
-ZSHRC_PATH="$HOME/.zshrc"
-ZSHRC_BACKUP_PATH="$HOME/.zshrc.backup.$(date +%s)"
+USER_HOME=$(eval echo "~$SUDO_USER")
+ZSHRC_PATH="$USER_HOME/.zshrc"
+ZSHRC_BACKUP_PATH="$USER_HOME/.zshrc.backup.$(date +%s)"
 
 # Function to check and install packages using Nix
 install_packages_with_nix() {
+
+    # Source Nix profile for multi-user
+    if [ -f /etc/profile.d/nix.sh ]; then
+        . /etc/profile.d/nix.sh
+    fi
+
     echo "Checking for Nix installation."
     if ! command -v nix-env >/dev/null; then
         echo "Nix is not installed. Please install Nix before running this script."
