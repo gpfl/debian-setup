@@ -9,8 +9,10 @@ fi
 set -euo pipefail
 
 # Define paths and configurations
-ZSHRC_PATH="$HOME/.zshrc"
-ZSHRC_BACKUP_PATH="$HOME/.zshrc.backup.$(date +%s)"
+TARGET_USER="${SUDO_USER:-$USER}"
+USER_HOME=$(eval echo "~$TARGET_USER")
+ZSHRC_PATH="$USER_HOME/.zshrc"
+ZSHRC_BACKUP_PATH="$USER_HOME/.zshrc.backup.$(date +%s)"
 
 # Install Zsh
 echo "Installing Zsh."
@@ -19,7 +21,7 @@ apt update && apt install -y zsh
 # Set Zsh as default shell
 if [ "$SHELL" != "$(which zsh)" ]; then
     echo "Setting Zsh as your default shell."
-    chsh -s "$(which zsh)"
+    chsh -s "$(which zsh)" "$TARGET_USER"
 fi
 
 # Backup existing .zshrc
