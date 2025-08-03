@@ -57,5 +57,7 @@ systemctl daemon-reload
 
 # Restart the service
 systemctl restart "$SERVICE_NAME"
+sleep 5
+systemctl enable "$SERVICE_NAME"
 
 echo "02 - $REPO_NAME configured successfully."
