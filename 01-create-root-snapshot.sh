@@ -1,23 +1,22 @@
-#!/bin/sh
-
-# Ensure the script is run as root
-if [ "$(id -u)" -ne 0 ]; then
-    echo "This script must be run as root" >&2
-    exit 1
-fi
+#!/usr/bin/env bash
 
 set -euo pipefail
 
-# Define paths and variables
-BTRFS_VOLUME="/dev/sda2"  # Default volume, can be overridden by passing an argument
-BTRFS_ROOT="/mnt/btrfs-root"
-SNAPSHOTS_DIR="$BTRFS_ROOT/@snapshots/root"
-SNAP_NAME="root-snapshot-$(date +%Y-%m-%d)"
+# Import shared config and marker logic
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/env/config.sh"
+source "$SCRIPT_DIR/env/common.sh"
 
-# Use the first argument as the volume if provided
-if [ $# -ge 1 ]; then
-    BTRFS_VOLUME="$1"
-fi
+check_marker
+
+# Ensure the script is run as root
+require_root
+
+# Override BTRFS_VOLUME if passed as an argument
+BTRFS_VOLUME="${1:-$BTRFS_VOLUME}"
+
+# Name for the snapshot
+SNAP_NAME="root-snapshot-$(date +%Y-%m-%d)"
 
 # Function to clean up mounts
 cleanup() {
@@ -25,8 +24,6 @@ cleanup() {
         umount "$BTRFS_ROOT"
     fi
 }
-
-# Trap to ensure cleanup on script exit
 trap cleanup EXIT
 
 # Create directory and mount the btrfs root
@@ -37,4 +34,6 @@ mount -o subvolid=5 "$BTRFS_VOLUME" "$BTRFS_ROOT"
 mkdir -p "$SNAPSHOTS_DIR"
 btrfs subvolume snapshot "$BTRFS_ROOT/@" "$SNAPSHOTS_DIR/$SNAP_NAME"
 
+
+touch "$MARKER_FILE"
 echo "01 - Snapshot created: $SNAP_NAME"
