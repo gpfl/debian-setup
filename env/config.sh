@@ -16,7 +16,7 @@ else
         exit 1
     else
         echo "Creating and setting permissions for $MARKER_DIR"
-mkdir -p "$MARKER_DIR"
+        mkdir -p "$MARKER_DIR"
         chown "$SUDO_USER:$SUDO_USER" "$MARKER_DIR"
         chmod 755 "$MARKER_DIR"
         echo "Directory created and permissions set."
